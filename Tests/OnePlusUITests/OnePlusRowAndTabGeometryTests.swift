@@ -62,7 +62,8 @@ final class OnePlusRowAndTabGeometryTests: XCTestCase {
                         GeometryProbe(view: marker).frame(width: 24, height: 24)
                     }.environment(\.onePlusControlState, state).onePlusDensity(density)
                         .background(OnePlusColor.panel))
-                    let window = attach(host, width: 300, height: 56, appearance: appearance)
+                    XCTAssertEqual(host.fittingSize.height, 44, accuracy: 0.01)
+                    let window = attach(host, width: 300, height: 44, appearance: appearance)
                     defer { window.close() }
                     frames.append(marker.convert(marker.bounds, to: host))
                     renders.append(try bitmap(host))
@@ -70,8 +71,8 @@ final class OnePlusRowAndTabGeometryTests: XCTestCase {
                 XCTAssertEqual(frames[0], frames[1])
                 let scale = CGFloat(renders[0].pixelsWide) / 300
                 for x: CGFloat in [1, 150, 275, 298] {
-                    let before = try XCTUnwrap(renders[0].colorAt(x: Int(x * scale), y: Int(28 * scale)))
-                    let after = try XCTUnwrap(renders[1].colorAt(x: Int(x * scale), y: Int(28 * scale)))
+                    let before = try XCTUnwrap(renders[0].colorAt(x: Int(x * scale), y: Int(22 * scale)))
+                    let after = try XCTUnwrap(renders[1].colorAt(x: Int(x * scale), y: Int(22 * scale)))
                     XCTAssertGreaterThan(abs(after.redComponent - before.redComponent), 0.01)
                 }
             }
