@@ -6,7 +6,7 @@ private struct OnePlusCardPaddingKey: EnvironmentKey {
 
 public extension EnvironmentValues {
     var onePlusCardPadding: CGFloat {
-        get { self[OnePlusCardPaddingKey.self] ?? (onePlusDensity == .compact ? OnePlusMetrics.compactCardPadding : OnePlusMetrics.cardPadding) }
+        get { self[OnePlusCardPaddingKey.self] ?? OnePlusMetrics.cardPadding }
         set { self[OnePlusCardPaddingKey.self] = newValue }
     }
 }

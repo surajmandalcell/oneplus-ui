@@ -45,7 +45,7 @@ final class OnePlusSettingRowTests: XCTestCase {
         }
     }
 
-    func testCompactHeaderAndSettingControlShareTheTwelvePointInset() throws {
+    func testCompactHeaderAndSettingControlShareTheSixteenPointInset() throws {
         let host = NSHostingView(rootView: OnePlusCard {
             OnePlusCardHeader("Fan", systemImage: "fan") { SettingControlProbe().frame(width: 40) }
             OnePlusSettingRow("Preset") { SettingControlProbe().frame(maxWidth: .infinity) }
@@ -55,7 +55,7 @@ final class OnePlusSettingRowTests: XCTestCase {
         let controls = descendants(host).filter { $0.identifier?.rawValue == "control" }
         XCTAssertEqual(controls.count, 2)
         for control in controls {
-            XCTAssertEqual(control.convert(control.bounds, to: host).maxX, 420 - 12, accuracy: 0.5)
+            XCTAssertEqual(control.convert(control.bounds, to: host).maxX, 420 - 16, accuracy: 0.5)
         }
     }
     func testCaptionUsesRemainingWidthAndControlColumnStaysFixed() throws {
