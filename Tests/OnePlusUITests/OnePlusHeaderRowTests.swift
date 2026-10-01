@@ -5,6 +5,33 @@ import XCTest
 
 @MainActor
 final class OnePlusHeaderRowTests: XCTestCase {
+    func testMenuControlRowDrawsNamedToolArtwork() throws {
+        let name = "HeaderGlyph-\(UUID().uuidString)"
+        let image = NSImage(size: NSSize(width: 32, height: 32), flipped: false) { bounds in
+            NSColor.black.setFill()
+            bounds.insetBy(dx: 4, dy: 4).fill()
+            return true
+        }
+        XCTAssertTrue(image.setName(name))
+        defer { image.setName(nil) }
+        for appearance in [NSAppearance.Name.aqua, .darkAqua] {
+            let host = NSHostingView(rootView: OnePlusMenuControlRow("Network", systemImage: name) {}
+                .foregroundStyle(.red).frame(width: 338, height: 30))
+            let window = NSWindow(contentRect: CGRect(x: -10000, y: -10000, width: 338, height: 30),
+                                  styleMask: .borderless, backing: .buffered, defer: false)
+            window.isReleasedWhenClosed = false
+            window.appearance = NSAppearance(named: appearance)
+            window.contentView = host
+            defer { window.close() }
+            host.layoutSubtreeIfNeeded()
+            let bitmap = try XCTUnwrap(host.bitmapImageRepForCachingDisplay(in: host.bounds))
+            host.cacheDisplay(in: host.bounds, to: bitmap)
+            let scale = CGFloat(bitmap.pixelsWide) / host.bounds.width
+            let color = try XCTUnwrap(bitmap.colorAt(x: Int(7 * scale), y: Int(15 * scale))?.usingColorSpace(.sRGB))
+            XCTAssertGreaterThan(color.redComponent - color.blueComponent, 0.3)
+        }
+    }
+
     func testHeaderRecipesCenterStatusSwitchesAndSmallerButtons() throws {
         for appearance in [NSAppearance.Name.aqua, .darkAqua] {
             for density in OnePlusDensity.allCases {

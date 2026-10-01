@@ -481,7 +481,13 @@ public struct OnePlusMenuControlRow<Control: View>: View {
     }
     public var body: some View {
         HStack(spacing: 8) {
-            Image(systemName: icon).font(.system(size: OnePlusMenuMetrics.glyphSize)).accessibilityHidden(true)
+            Group {
+                if let image = NSImage(named: icon) {
+                    Image(nsImage: image).renderingMode(.template).onePlusAssetGlyph(size: OnePlusMenuMetrics.glyphSize)
+                } else {
+                    Image(systemName: icon).font(.system(size: OnePlusMenuMetrics.glyphSize))
+                }
+            }.accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 Text(title).onePlusText(.row)
                 if let caption { Text(caption).onePlusText(.caption).lineLimit(1).help(caption) }
