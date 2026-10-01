@@ -19,6 +19,7 @@ struct OnePlusHeaderTitleLayout: Layout {
     let pointSize: CGFloat
     let height: CGFloat
     let scale: CGFloat
+    var centersCaps = false
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         CGSize(width: subviews.first?.sizeThatFits(.init(width: proposal.width, height: nil)).width ?? 0,
                height: height)
@@ -32,8 +33,10 @@ struct OnePlusHeaderTitleLayout: Layout {
         let capHeight = text.isEmpty ? font.capHeight : CTLineGetBoundsWithOptions(line, .useGlyphPathBounds).maxY
         // SF type retains half-point cap precision even on a 1x surface.
         let precision = max(2, scale)
-        let capTop = dimensions[.firstTextBaseline] - ceil(capHeight * precision) / precision
-        title.place(at: CGPoint(x: bounds.minX, y: bounds.minY - capTop), anchor: .topLeading, proposal: proposal)
+        let roundedCapHeight = ceil(capHeight * precision) / precision
+        let capTop = dimensions[.firstTextBaseline] - roundedCapHeight
+        let top = centersCaps ? (bounds.height - roundedCapHeight) / 2 : 0
+        title.place(at: CGPoint(x: bounds.minX, y: bounds.minY + top - capTop), anchor: .topLeading, proposal: proposal)
     }
     func explicitAlignment(of guide: VerticalAlignment, in bounds: CGRect, proposal: ProposedViewSize,
                            subviews: Subviews, cache: inout ()) -> CGFloat? {

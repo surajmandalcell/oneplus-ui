@@ -15,8 +15,8 @@ public extension EnvironmentValues {
 public enum OnePlusMetrics {
     public static let titleRow: CGFloat = 54
     public static let centerline: CGFloat = 27
-    public static let appletTitlebar: CGFloat = 44
-    public static let appletCenterline = centerline
+    public static let appletTitlebar: CGFloat = 40
+    public static let appletCenterline: CGFloat = 22
     public static let trafficLightLeadingInset: CGFloat = 13
     public static let sidebarTitleGapAfterZoom: CGFloat = 14
     public static let searchHeight: CGFloat = 32

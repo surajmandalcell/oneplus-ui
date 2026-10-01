@@ -11,17 +11,19 @@ public struct OnePlusAppletTitlebar<Title: View, Actions: View>: View {
         self.clearsTrafficLights = clearsTrafficLights; self.title = title(); self.actions = actions()
     }
     public var body: some View {
-        HStack(alignment: .top, spacing: 8) {
+        HStack(spacing: 8) {
             OnePlusHeaderTitleLayout(text: titleText, pointSize: OnePlusTextRole.sidebarTitle.size(for: .regular),
-                                     height: 24, scale: displayScale) {
+                                     height: 24, scale: displayScale, centersCaps: true) {
                 title.onePlusText(.sidebarTitle).lineLimit(1)
             }
             Spacer(minLength: 12)
             OnePlusHeaderActions { actions }
         }
-        .frame(height: 24, alignment: .top).padding(.top, OnePlusMetrics.contentTop)
+        .frame(height: OnePlusMetrics.compactControlHeight)
+        .padding(.top, OnePlusMetrics.top(of: OnePlusMetrics.compactControlHeight,
+                                        centerline: OnePlusMetrics.appletCenterline))
         .padding(.leading, clearsTrafficLights ? OnePlusMetrics.titleStart(afterZoom: zoomTrailingX) : 16)
-        .padding(.trailing, 16).frame(height: OnePlusMetrics.appletTitlebar)
+        .padding(.trailing, 16).frame(height: OnePlusMetrics.appletTitlebar, alignment: .top)
         .background(OnePlusWindowDragArea())
     }
 }

@@ -239,7 +239,7 @@ final class OnePlusPageTests: XCTestCase {
                 return view.convert(view.bounds, to: host)
             }
             let toolbar = try rect("toolbar"), rows = try rect("rows"), footer = try rect("footer")
-            XCTAssertEqual(toolbar.minY, showsTabs ? 96 : 60, accuracy: 0.5)
+            XCTAssertEqual(toolbar.minY, showsTabs ? 92 : 56, accuracy: 0.5)
             XCTAssertEqual(rows.minY - toolbar.maxY, 16, accuracy: 0.5)
             XCTAssertEqual(footer.minY - rows.maxY, 16, accuracy: 0.5)
             XCTAssertEqual(rows.minX, 16, accuracy: 0.5)

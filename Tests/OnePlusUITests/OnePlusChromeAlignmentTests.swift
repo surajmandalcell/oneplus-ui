@@ -36,7 +36,8 @@ final class OnePlusChromeAlignmentTests: XCTestCase {
                             .overlay { ChromeContentProbe("switch") }
                         Button("Action") {}.buttonStyle(OnePlusButtonStyle(.primary, size: .small))
                             .overlay { ChromeContentProbe("button") }
-                    }, name: title, titleX: 88, appearance: appearance, scale: scale, probes: ["button", "switch"])
+                    }, name: title, titleX: 88, appearance: appearance, scale: scale,
+                                    probes: ["button", "switch"], applet: true)
                 }
                 try checkHeader(OnePlusSheet("HEADER", close: {}) { Color.clear.frame(height: 40) },
                                 name: "sheet", titleX: 20, appearance: appearance, scale: scale, probes: [])
@@ -45,7 +46,7 @@ final class OnePlusChromeAlignmentTests: XCTestCase {
     }
 
     private func checkHeader(_ view: some View, name: String, titleX: CGFloat,
-                             appearance: NSAppearance.Name, scale: CGFloat, probes: [String]) throws {
+                             appearance: NSAppearance.Name, scale: CGFloat, probes: [String], applet: Bool = false) throws {
         let app = NSApplication.shared
         let saved = app.appearance
         app.appearance = NSAppearance(named: appearance)
@@ -67,8 +68,7 @@ final class OnePlusChromeAlignmentTests: XCTestCase {
         bitmap.size = host.bounds.size
         host.cacheDisplay(in: host.bounds, to: bitmap)
         let captures = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
-            .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-            .appendingPathComponent("tmp/redesign/captures/chrome")
+            .deletingLastPathComponent().appendingPathComponent("tmp/chrome-alignment")
         try FileManager.default.createDirectory(at: captures, withIntermediateDirectories: true)
         let filename = "r48-\(name.replacingOccurrences(of: " ", with: "-"))-\(appearance.rawValue)-\(Int(scale))x.png"
         try XCTUnwrap(bitmap.representation(using: .png, properties: [:])).write(to: captures.appendingPathComponent(filename))
@@ -90,7 +90,8 @@ final class OnePlusChromeAlignmentTests: XCTestCase {
             return -1
         }
         // Linear light avoids counting the different Light/Dark antialiasing halos as cap strokes.
-        XCTAssertEqual(try paintedTop(x: titleX..<(titleX + 90), threshold: 0.45, linear: true), 20, accuracy: 1 / scale,
+        let titleTop = applet ? 22 - NSFont.systemFont(ofSize: 12.5).capHeight / 2 : 20
+        XCTAssertEqual(try paintedTop(x: titleX..<(titleX + (applet ? 6 : 90)), threshold: 0.45, linear: true), titleTop, accuracy: 1 / scale,
                        "\(name) title \(appearance) \(scale)x")
         func descendants(_ view: NSView) -> [NSView] { [view] + view.subviews.flatMap(descendants) }
         let controlFrames = try probes.map { probe in
@@ -99,7 +100,12 @@ final class OnePlusChromeAlignmentTests: XCTestCase {
         }
         let maximumHeight = controlFrames.map(\.height).max()
         let tallest = controlFrames.filter { $0.height == maximumHeight }.min { $0.minY < $1.minY }
-        if let tallest { XCTAssertEqual(tallest.minY, 20, accuracy: 0.01, "\(name) tallest control") }
+        if let tallest {
+            if applet {
+                XCTAssertEqual(tallest.minY, 10, accuracy: 0.01, "\(name) action top")
+                XCTAssertEqual(tallest.maxY, 34, accuracy: 0.01, "\(name) action bottom")
+            } else { XCTAssertEqual(tallest.minY, 20, accuracy: 0.01, "\(name) tallest control") }
+        }
         for probe in probes + (name.hasPrefix("tool-") ? ["icon"] : []) {
             let node = try XCTUnwrap(descendants(host).first { $0.identifier?.rawValue == probe })
             let rect = node.convert(node.bounds, to: host)
@@ -204,12 +210,13 @@ final class OnePlusChromeAlignmentTests: XCTestCase {
                 let zoom = try XCTUnwrap(window.standardWindowButton(.zoomButton))
                 let rect = close.convert(close.bounds, to: nil)
                 XCTAssertEqual(rect.minX, 13, accuracy: 0.01)
-                XCTAssertEqual(window.frame.height - rect.maxY, 20, accuracy: 0.01)
+                XCTAssertEqual(window.frame.height - rect.maxY, canvas.isApplet ? 15 : 20, accuracy: 0.01)
                 XCTAssertEqual(titleX - zoom.convert(zoom.bounds, to: nil).maxX, 14, accuracy: 0.01)
             }
             chrome.stopObserving()
             window.close()
         }
+        XCTAssertEqual(OnePlusMetrics.appletTitlebar + OnePlusMetrics.contentGap, 56)
     }
 
     func testSceneCanvasDoesNotAddOrRemoveATitlebarInset() async throws {

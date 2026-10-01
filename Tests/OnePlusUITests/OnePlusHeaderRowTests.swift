@@ -33,7 +33,7 @@ final class OnePlusHeaderRowTests: XCTestCase {
                         } actions: { actions }),
                         AnyView(OnePlusAppletTitlebar(title: "Awake") { actions })
                     ]
-                    for recipe in recipes {
+                    for (index, recipe) in recipes.enumerated() {
                         let host = NSHostingView(rootView: recipe.onePlusDensity(density)
                             .environment(\.displayScale, scale)
                             .frame(width: 900, height: 100, alignment: .topLeading)
@@ -50,7 +50,7 @@ final class OnePlusHeaderRowTests: XCTestCase {
                             return node.convert(node.bounds, to: host)
                         }
                         let button = try frame("button")
-                        XCTAssertEqual(button.minY, 20, accuracy: 0.01)
+                        XCTAssertEqual(button.minY, index == 2 ? 8 : 20, accuracy: 0.01)
                         for name in ["status", "switch", "small", "select", "search", "field", "progress"] {
                             XCTAssertEqual(try frame(name).midY, button.midY, accuracy: 0.5,
                                            "\(name) \(density) \(appearance) \(scale)x")
