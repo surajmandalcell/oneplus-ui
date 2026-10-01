@@ -37,6 +37,7 @@ public struct OnePlusRetainedPage<Revision: Equatable, Content: View>: NSViewRep
             .onePlusNeutralControls())
         let host = context.coordinator.host ?? NSHostingView(rootView: root)
         host.sizingOptions = []
+        host.safeAreaRegions = []
         host.rootView = root
         context.coordinator.host = host
         if isSelected {

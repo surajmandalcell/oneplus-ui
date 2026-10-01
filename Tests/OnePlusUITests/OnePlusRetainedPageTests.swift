@@ -6,6 +6,49 @@ import XCTest
 
 @MainActor
 final class OnePlusRetainedPageTests: XCTestCase {
+    func testRetainedToolPageKeepsFullSizeWindowGeometryOnReturn() throws {
+        NSApplication.shared.setActivationPolicy(.prohibited)
+        let foreground = NSWorkspace.shared.frontmostApplication?.processIdentifier
+        for appearance in [NSAppearance.Name.darkAqua, .aqua] {
+            let model = RetainedPageModel()
+            model.selected = true
+            let host = NSHostingView(rootView: OnePlusWindowRoot(canvas: .main) {
+                OnePlusSidebarTitle("MacPowerToys")
+            } content: {
+                OnePlusRetainedPage(isSelected: model.selected, revision: 0) {
+                    VStack(spacing: 0) {
+                        OnePlusToolPageHeader(title: "Task Manager", subtitle: "Inspect processes and live system activity") {
+                            RetainedGeometryProbe(id: "tool-icon")
+                        } actions: { EmptyView() }
+                        OnePlusTabStrip(tabs: [OnePlusTab(0, "Settings"), OnePlusTab(1, "How to use")], selection: .constant(0))
+                        RetainedGeometryProbe(id: "display").frame(height: 40).padding(.horizontal, 24).padding(.top, 16)
+                        Spacer(minLength: 0)
+                    }
+                }
+            })
+            let window = NSWindow(contentRect: CGRect(x: -10000, y: -10000, width: 1240, height: 840),
+                                  styleMask: [.titled, .fullSizeContentView], backing: .buffered, defer: false)
+            window.isReleasedWhenClosed = false
+            window.appearance = NSAppearance(named: appearance)
+            window.contentView = host
+            defer { window.close() }
+            for selected in [true, false, true] {
+                model.selected = selected
+                host.layoutSubtreeIfNeeded()
+                RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.02))
+                host.layoutSubtreeIfNeeded()
+                guard selected else { continue }
+                for (id, expectedTop) in [("tool-icon", CGFloat(20)), ("display", 118)] {
+                    let probe = try XCTUnwrap(descendants(host).first { $0.identifier?.rawValue == id })
+                    let frame = probe.convert(probe.bounds, to: host)
+                    XCTAssertEqual(frame.minY, expectedTop, accuracy: 0.5, "\(appearance): \(id)")
+                    XCTAssertEqual(frame.minX, 240, accuracy: 0.5)
+                }
+                XCTAssertEqual(NSWorkspace.shared.frontmostApplication?.processIdentifier, foreground)
+            }
+        }
+    }
+
     func testVisitedPageKeepsStateWithoutHiddenObservationOrSelectionRebuilds() throws {
         NSApplication.shared.setActivationPolicy(.prohibited)
         let foreground = NSWorkspace.shared.frontmostApplication?.processIdentifier
@@ -102,6 +145,16 @@ final class OnePlusRetainedPageTests: XCTestCase {
     private func descendants(_ view: NSView) -> [NSView] {
         [view] + view.subviews.flatMap(descendants)
     }
+}
+
+private struct RetainedGeometryProbe: NSViewRepresentable {
+    let id: String
+    func makeNSView(context: Context) -> NSView {
+        let view = NSView()
+        view.identifier = NSUserInterfaceItemIdentifier(id)
+        return view
+    }
+    func updateNSView(_ view: NSView, context: Context) {}
 }
 
 @MainActor @Observable private final class RetainedPageModel {
