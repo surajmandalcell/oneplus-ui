@@ -118,13 +118,18 @@ final class OnePlusRowAndTabGeometryTests: XCTestCase {
         }
     }
 
-    func testStatMetadataUsesOneLineAndDensityPadding() {
+    func testStatMetadataUsesOneLineAndSixteenPointPadding() {
         for density in OnePlusDensity.allCases {
             let host = NSHostingView(rootView: OnePlusStatCell("Used", value: "12 GB").onePlusDensity(density))
             let window = attach(host, width: 300, height: 70)
             defer { window.close() }
-            XCTAssertLessThanOrEqual(host.fittingSize.height, density == .compact ? 44 : 52)
-            XCTAssertGreaterThan(host.fittingSize.height, 0)
+            let unpadded = NSHostingView(rootView: OnePlusStatCell("Used", value: "12 GB")
+                .environment(\.onePlusCardPadding, 0).onePlusDensity(density))
+            let unpaddedWindow = attach(unpadded, width: 300, height: 70)
+            defer { unpaddedWindow.close() }
+            XCTAssertEqual(host.fittingSize.height - unpadded.fittingSize.height, 32, accuracy: 0.01)
+            XCTAssertLessThanOrEqual(host.fittingSize.height, 52)
+            XCTAssertGreaterThan(unpadded.fittingSize.height, 0)
         }
     }
 
