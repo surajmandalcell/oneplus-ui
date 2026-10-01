@@ -1,0 +1,6 @@
+.build/
+.swiftpm/
+tmp/
+.DS_Store
+goals.md
+goals.archive.md
