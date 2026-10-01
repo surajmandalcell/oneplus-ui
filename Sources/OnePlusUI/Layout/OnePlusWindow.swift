@@ -11,7 +11,9 @@ public struct OnePlusWindowRoot<Sidebar: View, Content: View>: View {
     public var body: some View {
         ZStack {
             OnePlusColor.window
-            OnePlusWindowTexture()
+            if canvas != .macTweaks {
+                OnePlusWindowTexture()
+            }
             HStack(spacing: 0) {
                 if canvas.sidebarWidth > 0 {
                     sidebar.frame(width: canvas.sidebarWidth).frame(maxHeight: .infinity)
