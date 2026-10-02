@@ -1,8 +1,32 @@
-# OnePlusUI v2
+<h1 align="center">OnePlusUI</h1>
 
-OnePlusUI is the native macOS component package for MacPowerToys. It implements
+<p align="center">
+  Dark, quiet, native SwiftUI components for macOS tools.<br>
+  The window, page, card, control, and menu bar panel kit behind MacPowerToys and NetToys.
+</p>
+
+<p align="center">
+  Swift Package · macOS 15+ · Swift 6.2 · MIT
+</p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/surajmandalcell/macpowertoys/main/docs/screenshots/macpowertoys-launcher.png" width="100%" alt="The MacPowerToys launcher built with OnePlusUI: sidebar, page header, tabs, and tool cards">
+</p>
+
+## Install
+
+```swift
+.package(url: "https://github.com/surajmandalcell/oneplus-ui.git", exact: "1.0.2")
+```
+
+Add `OnePlusUI` to your target's dependencies, then `import OnePlusUI`. Run
+`swift run OnePlusUIShowcase` to see every component.
+
+## About
+
+OnePlusUI implements
 [DESIGN.md v14](https://github.com/surajmandalcell/macpowertoys/blob/main/DESIGN.md): fixed canvases, dynamic colors, two densities,
-native controls, and static texture. It requires macOS 15 and Swift 6.2.
+native controls, and static texture.
 
 Views never restyle a component locally. Add a named variant to this package
 when a surface needs different geometry or behavior. Keep approved tool icon
