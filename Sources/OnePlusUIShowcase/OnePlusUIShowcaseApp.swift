@@ -535,6 +535,7 @@ private struct OnePlusUIShowcase: View {
             OnePlusSectionTitle("Applet titlebar · 40 pt · centerline 22 pt")
             OnePlusCard {
                 OnePlusAppletTitlebar(title: "Awake") {
+                    OnePlusAppletSettingsButton(isActive: false) { showSheet = true }
                     Button("Start") { enabled.toggle(); announce(enabled ? "Awake started" : "Awake stopped") }.buttonStyle(OnePlusButtonStyle(.primary, size: .small))
                 }
                 OnePlusColor.lineSoft.frame(height: 1)
@@ -542,7 +543,7 @@ private struct OnePlusUIShowcase: View {
                     OnePlusSegmented(choices: [("Off", "Off"), ("Auto", "Until"), ("On", "Indefinitely")], selection: $mode)
                     OnePlusStatus(enabled ? "Keeping your Mac awake" : "Sleep is allowed")
                     OnePlusSettingRow("Keep display on", separator: false) { Toggle("Display", isOn: $checked).labelsHidden().toggleStyle(OnePlusSwitchStyle()) }
-                }.padding(16).onePlusFloatingSettings(isActive: false) { showSheet = true }
+                }.padding(16)
             }.frame(width: 560)
             OnePlusCard {
                 OnePlusAppletTitlebar(title: "Color Picker") {
@@ -582,7 +583,7 @@ private struct OnePlusUIShowcase: View {
                 HStack(spacing: 12) {
                     Button("Show toast") { announce("Settings saved") }.buttonStyle(OnePlusButtonStyle())
                     Button("Open native sheet") { showSheet = true }.buttonStyle(OnePlusButtonStyle(.primary))
-                    OnePlusFloatingSettingsButton(isActive: true) { showSheet = true }
+                    OnePlusAppletSettingsButton(isActive: true) { showSheet = true }
                 }.padding(16)
             }
             OnePlusToast("Static toast sample")

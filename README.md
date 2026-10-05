@@ -222,9 +222,7 @@ with `textColor: OnePlusColor.ink` for primary identity text.
 | `OnePlusMenuMetric` / `OnePlusMenuItemCard` | Show a host header, metric cells, detail, and trailing actions. Both accept optional `systemImage` glyphs. `online: false` uses muted readings and a hollow status dot. |
 | `OnePlusMenuOpenApp` | Supply the ghost Open App action. |
 | `OnePlusAppletTitlebar` | Add a 40 pt bar with title and actions on the 22 pt centerline. |
-| `OnePlusFloatingSettingsButton` | Place a 24 pt Settings or Back button at the applet's trailing edge. |
-| `.onePlusFloatingSettingsInset()` | Reserve 52 pt below an applet body before an existing gear overlay. |
-| `.onePlusFloatingSettings(isActive:help:action:)` | Reserve the same area and place the gear in one modifier. |
+| `OnePlusAppletSettingsButton` | Place a ghost gear icon button in the applet titlebar, left of the primary action. It shows a selected state while Settings is open. |
 | `.onePlusScrollIndicators(axes:)` / `OnePlusOverlayScroller` | Keep full viewport width and thin overlay thumbs on the requested axes. |
 
 Catalogs can use `OnePlusSegmented(iconChoices:selection:accessibilityLabel:)`

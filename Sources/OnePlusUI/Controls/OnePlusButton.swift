@@ -24,9 +24,11 @@ public struct OnePlusButtonStyle: ButtonStyle {
     let minWidth: CGFloat?
     let height: CGFloat?
     let horizontalPadding: CGFloat
+    let selected: Bool
 
     public init(_ variant: Variant = .neutral, size: Size? = nil, minWidth: CGFloat? = nil,
-                height: CGFloat? = nil, horizontalPadding: CGFloat = 10) {
+                height: CGFloat? = nil, horizontalPadding: CGFloat = 10, selected: Bool = false) {
+        self.selected = selected
         self.variant = variant
         self.size = size
         self.minWidth = minWidth
@@ -99,7 +101,7 @@ private struct OnePlusButtonBody<Label: View>: View {
         case .primary: OnePlusColor.primaryInk
         case .accentPrimary: OnePlusColor.accentPrimaryInk
         case .destructive: OnePlusColor.danger
-        case .ghost, .icon, .link: isHovering || isFocused ? OnePlusColor.ink : OnePlusColor.secondary
+        case .ghost, .icon, .link: isHovering || isFocused || style.selected ? OnePlusColor.ink : OnePlusColor.secondary
         case .neutral, .borderedIcon: OnePlusColor.controlInk
         }
     }
@@ -115,7 +117,7 @@ private struct OnePlusButtonBody<Label: View>: View {
         case .primary: return isHovering ? OnePlusColor.primaryHover : OnePlusColor.primaryFill
         case .destructive: return OnePlusColor.dangerFill
         case .neutral, .borderedIcon: return isHovering ? OnePlusColor.raisedHover : OnePlusColor.raised
-        case .ghost, .icon: return isHovering ? OnePlusColor.raised : .clear
+        case .ghost, .icon: return style.selected ? OnePlusColor.selection : isHovering ? OnePlusColor.raised : .clear
         case .link: return .clear
         }
     }

@@ -195,7 +195,7 @@ final class OnePlusPageTests: XCTestCase {
         host.layoutSubtreeIfNeeded()
         let row = try XCTUnwrap(descendants(host).first { $0.identifier?.rawValue == "last-row" })
         XCTAssertEqual(row.convert(row.bounds, to: host).maxY,
-                       canvas.size.height - (canvas.isApplet ? 0 : 24), accuracy: 0.5)
+                       canvas.size.height - OnePlusMetrics.gutter, accuracy: 0.5)
         }
     }
 
@@ -283,16 +283,16 @@ final class OnePlusPageTests: XCTestCase {
         }
     }
 
-    func testAppletGearKeepsTheViewportAndOnlyPadsTheScrollEnd() throws {
+    func testAppletPageKeepsTheViewportAndPadsTheScrollEnd() throws {
         for canvas: OnePlusWindowCanvas in [.awake, .colorPicker, .textExtractor] {
         for height in Set([canvas.size.height, canvas.heightRange?.upperBound ?? canvas.size.height]) {
-        for isActive in [false, true] {
+        do {
         let host = NSHostingView(rootView: OnePlusPage(layout: .applet) {
             OnePlusAppletTitlebar(title: "Applet") { EmptyView() }
         } content: {
             Color.clear.frame(height: 900)
             PageRegionProbe("last-row").frame(height: 40)
-        }.onePlusFloatingSettings(isActive: isActive) {})
+        })
         let window = NSWindow(contentRect: CGRect(x: -10000, y: -10000, width: canvas.size.width, height: height),
                               styleMask: .borderless, backing: .buffered, defer: false)
         window.isReleasedWhenClosed = false
@@ -306,7 +306,7 @@ final class OnePlusPageTests: XCTestCase {
         scroll.reflectScrolledClipView(scroll.contentView)
         host.layoutSubtreeIfNeeded()
         let row = try XCTUnwrap(descendants(host).first { $0.identifier?.rawValue == "last-row" })
-        XCTAssertEqual(row.convert(row.bounds, to: host).maxY, height - 52, accuracy: 0.5)
+        XCTAssertEqual(row.convert(row.bounds, to: host).maxY, height - OnePlusMetrics.gutter, accuracy: 0.5)
         }
         }
         }

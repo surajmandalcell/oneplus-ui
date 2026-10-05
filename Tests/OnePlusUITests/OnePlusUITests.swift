@@ -204,11 +204,12 @@ final class OnePlusUITests: XCTestCase {
         }
     }
 
-    func testFloatingGearDoesNotChangeBodySize() {
-        let host = NSHostingView(rootView: Color.clear.frame(width: 300, height: 100)
-            .onePlusFloatingSettings(isActive: false) {})
-        XCTAssertEqual(host.fittingSize.height, 100)
-        XCTAssertEqual(host.fittingSize.width, 300)
+    func testAppletSettingsButtonIsOneCompactIconControl() {
+        for isActive in [false, true] {
+            let host = NSHostingView(rootView: OnePlusAppletSettingsButton(isActive: isActive) {})
+            XCTAssertEqual(host.fittingSize.height, OnePlusMetrics.compactControlHeight)
+            XCTAssertEqual(host.fittingSize.width, OnePlusMetrics.compactControlHeight)
+        }
     }
 
     func testHealthyStatusUsesNeutralInkUnlessSuccessIsExplicit() {

@@ -35,7 +35,8 @@ public extension OnePlusAppletTitlebar where Title == Text {
     }
 }
 
-public struct OnePlusFloatingSettingsButton: View {
+/// Titlebar action that toggles an applet between its home page and its settings page.
+public struct OnePlusAppletSettingsButton: View {
     let active: Bool
     let label: String
     let action: () -> Void
@@ -52,26 +53,8 @@ public struct OnePlusFloatingSettingsButton: View {
             action()
         } label: {
             Image(systemName: active ? "gearshape.fill" : "gearshape")
-                .font(.system(size: 12)).foregroundStyle(OnePlusColor.secondary)
-                .frame(width: 24, height: 24)
-                .background(active ? OnePlusColor.selection : OnePlusColor.raised, in: Circle())
         }
-        .buttonStyle(OnePlusInteractionStyle(selected: active, radius: 12))
+        .buttonStyle(OnePlusButtonStyle(.icon, size: .small, selected: active))
         .help(label).accessibilityLabel(label)
-    }
-}
-
-public extension View {
-    /// Reserve end space inside the applet's scroll content without shrinking its viewport.
-    func onePlusFloatingSettingsInset() -> some View {
-        environment(\.onePlusPageScrollBottomInset, OnePlusMetrics.floatingSettingsInset)
-    }
-
-    /// Overlay the gear at the shared eight-point inset with scroll-content clearance.
-    func onePlusFloatingSettings(isActive: Bool, help: String? = nil,
-                                action: @escaping () -> Void) -> some View {
-        onePlusFloatingSettingsInset().overlay(alignment: .bottomTrailing) {
-            OnePlusFloatingSettingsButton(isActive: isActive, help: help, action: action).padding(8)
-        }
     }
 }

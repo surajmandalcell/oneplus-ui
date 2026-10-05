@@ -275,7 +275,7 @@ public struct OnePlusPage<Header: View, Tabs: View, Content: View>: View {
             }
     }
     private var gutter: CGFloat { layout == .applet ? OnePlusMetrics.appletGutter : density.gutter }
-    private var bottomInset: CGFloat { layout == .applet ? 0 : OnePlusMetrics.gutter }
+    private var bottomInset: CGFloat { OnePlusMetrics.gutter }
     private var scrollBottomInset: CGFloat {
         max(inheritedBottomInset, scrolls ? max(bottomInset, footerHeight) : footer == nil ? bottomInset : 0)
     }
